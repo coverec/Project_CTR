@@ -19,6 +19,10 @@ ifeq ($(PROJECT_PLATFORM),)
 	endif
 endif
 
+ifeq ($(PROJECT_PLATFORM), MACOS)
+	export INC += -I$(shell xcrun --show-sdk-path)/usr/include/c++/v1
+endif
+
 # Detect Architecture
 ifeq ($(PROJECT_PLATFORM_ARCH),)
 	ifeq ($(PROJECT_PLATFORM), WIN32)
@@ -42,8 +46,8 @@ clean: clean_progs
 # Programs
 .PHONY: progs
 progs:
-	@$(foreach prog,$(PROJECT_PROGRAM_LOCAL_DIR), cd "$(prog)" && $(MAKE) deps program && cd "$(PROJECT_PATH)";)
+	@$(foreach prog,$(PROJECT_PROGRAM_LOCAL_DIR), (cd "$(prog)" && $(MAKE) deps program) &&) true
 
 .PHONY: clean_progs
 clean_progs:
-	@$(foreach prog,$(PROJECT_PROGRAM_LOCAL_DIR), cd "$(prog)" && $(MAKE) clean_deps clean && cd "$(PROJECT_PATH)";)
+	@$(foreach prog,$(PROJECT_PROGRAM_LOCAL_DIR), (cd "$(prog)" && $(MAKE) clean_deps clean) &&) true
